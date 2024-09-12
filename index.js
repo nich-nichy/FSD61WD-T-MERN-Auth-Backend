@@ -1,41 +1,43 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
-require('dotenv').config();
-
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
 const app = express();
-const port = process.env.PORT || 8081;
+require("dotenv").config();
+const cookieParser = require("cookie-parser");
+const authRoute = require("./routes/userAuth.route.js");
+const { MONGO_URL, PORT, APP_URL } = process.env;
+const port = PORT || 8081;
 
-app.use(morgan('combined'));
+app.use(
+    cors({
+        origin: APP_URL,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    })
+);
+
+app.use(morgan("combined"));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(express.json());
 
-// connect to MongoDB
-const connectDB = async () => {
-    try {
-        if (mongoose.connection.readyState === 1) {
-            console.log('MongoDB is already connected.');
-            return;
-        }
-        await mongoose.connect(process.env.DB_URL, {});
-        console.log('MongoDB connected successfully!');
-    } catch (err) {
-        console.error('Error connecting to MongoDB:', err);
-    }
-};
+mongoose.connect(MONGO_URL, {})
+    .then(() => console.log("MongoDB is connected successfully"))
+    .catch((err) => console.error(err));
 
-connectDB();
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
 
-// Routes
-app.get('/', (req, res) => {
+app.use("/", authRoute);
+
+app.get("/status", (req, res) => {
     res.send(`Backend for app is running on ${port}`);
-})
+});
 
-app.use("/auth", require("./routers/userAuth.route.js"));
-
-// Route Error handling
+// Error handling
 app.use((req, res, next) => {
     const error = {
         status: 404,
@@ -44,7 +46,6 @@ app.use((req, res, next) => {
     next(error);
 });
 
-// Error handling in controller
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
     console.log("ERROR", error);
@@ -55,7 +56,3 @@ app.use((error, req, res, next) => {
         },
     });
 });
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-})
