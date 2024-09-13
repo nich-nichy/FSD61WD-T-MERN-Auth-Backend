@@ -10,6 +10,8 @@ const authRoute = require("./routes/userAuth.route.js");
 const { MONGO_URL, PORT, APP_URL } = process.env;
 const port = PORT || 8081;
 
+console.log(APP_URL, "from index")
+
 app.use(
     cors({
         origin: APP_URL,

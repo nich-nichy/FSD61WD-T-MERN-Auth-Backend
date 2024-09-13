@@ -15,7 +15,9 @@ module.exports.SignupFunction = async (req, res, next) => {
         const token = createSecretToken(user._id);
         res.cookie("token", token, {
             withCredentials: true,
-            httpOnly: false,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
         });
         res
             .status(201)
@@ -43,7 +45,9 @@ module.exports.LoginFunction = async (req, res, next) => {
         console.log(token)
         res.cookie("token", token, {
             withCredentials: true,
-            httpOnly: false,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
         });
         res.status(200).json({ message: "User logged in successfully", success: true });
     } catch (error) {
@@ -70,6 +74,7 @@ module.exports.PasswordResetFunction = async (req, res) => {
                 pass: process.env.EMAIL_PASS,
             }
         });
+        console.log(process.env.APP_URL);
         const resetLink = `${process.env.APP_URL}/reset-password/${resetToken}`;
         console.log(resetLink);
         await transporter.sendMail({
