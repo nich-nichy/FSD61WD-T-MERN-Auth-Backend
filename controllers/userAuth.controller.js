@@ -4,6 +4,21 @@ const bcrypt = require("bcryptjs");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
+module.exports.checkUserFunction = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const existingUser = await userSchema.findOne({ email });
+        if (existingUser) {
+            res.status(200).json({ message: "User is present", status: true });
+        } else {
+            res.status(200).json({ message: "User is not present", status: false });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
 module.exports.SignupFunction = async (req, res, next) => {
     try {
         const { email, password, username, createdAt } = req.body;

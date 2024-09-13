@@ -1,8 +1,10 @@
-const { SignupFunction, LoginFunction, PasswordResetFunction, UpdatePasswordFunction } = require("../controllers/userAuth.controller");
+const { SignupFunction, LoginFunction, PasswordResetFunction, UpdatePasswordFunction, checkUserFunction } = require("../controllers/userAuth.controller");
 const { userVerification } = require("../middleware/userAuth.middleware");
 const router = require("express").Router();
 
 router.post('/', userVerification)
+
+router.post("/check-user", checkUserFunction)
 
 router.post("/signup", SignupFunction);
 
