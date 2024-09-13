@@ -13,25 +13,9 @@ module.exports.SignupFunction = async (req, res, next) => {
         }
         const user = await userSchema.create({ email, password, username, createdAt });
         const token = createSecretToken(user._id);
-        res.cookie("token", token, {
-            withCredentials: true,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'None',
-        });
-        res.cookie("token_client", token, {
-            withCredentials: true,
-            httpOnly: false,
-            secure: true,
-            sameSite: 'None',
-        });
-        res.cookie("token_client_two", token, {
-            withCredentials: true,
-            httpOnly: false,
-        });
         res
             .status(201)
-            .json({ message: "User signed in successfully", success: true, user });
+            .json({ message: "User signed in successfully", success: true, user, token });
     } catch (error) {
         console.error(error);
     }
@@ -53,23 +37,7 @@ module.exports.LoginFunction = async (req, res, next) => {
         }
         const token = createSecretToken(user._id);
         console.log(token)
-        res.cookie("token", token, {
-            withCredentials: true,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'None',
-        });
-        res.cookie("token_client", token, {
-            withCredentials: true,
-            httpOnly: false,
-            secure: true,
-            sameSite: 'None',
-        });
-        res.cookie("token_client_two", token, {
-            withCredentials: true,
-            httpOnly: false,
-        });
-        res.status(200).json({ message: "User logged in successfully", success: true });
+        res.status(200).json({ message: "User logged in successfully", success: true, token });
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).json({ message: "Internal Server Error" });
