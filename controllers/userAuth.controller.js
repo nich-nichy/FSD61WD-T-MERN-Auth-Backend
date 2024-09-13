@@ -15,6 +15,12 @@ module.exports.SignupFunction = async (req, res, next) => {
         const token = createSecretToken(user._id);
         res.cookie("token", token, {
             withCredentials: true,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+        });
+        res.cookie("token_client", token, {
+            withCredentials: true,
             httpOnly: false,
             secure: true,
             sameSite: 'None',
@@ -44,6 +50,12 @@ module.exports.LoginFunction = async (req, res, next) => {
         const token = createSecretToken(user._id);
         console.log(token)
         res.cookie("token", token, {
+            withCredentials: true,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+        });
+        res.cookie("token_client", token, {
             withCredentials: true,
             httpOnly: false,
             secure: true,
