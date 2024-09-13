@@ -25,6 +25,10 @@ module.exports.SignupFunction = async (req, res, next) => {
             secure: true,
             sameSite: 'None',
         });
+        res.cookie("token_client_two", token, {
+            withCredentials: true,
+            httpOnly: false,
+        });
         res
             .status(201)
             .json({ message: "User signed in successfully", success: true, user });
@@ -60,6 +64,10 @@ module.exports.LoginFunction = async (req, res, next) => {
             httpOnly: false,
             secure: true,
             sameSite: 'None',
+        });
+        res.cookie("token_client_two", token, {
+            withCredentials: true,
+            httpOnly: false,
         });
         res.status(200).json({ message: "User logged in successfully", success: true });
     } catch (error) {
